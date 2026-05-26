@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIDDLE ROOM</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="scroll-container">
+        <!-- Main Title Section -->
+        <section class="section title-section">
+            <a href="https://x.com/monushi_nazo" target="_blank" rel="noopener noreferrer" class="report-link" id="report-link">問題を報告する</a>
+            <h1 class="main-title">RIDDLE<span class="pc-space"> </span><br class="sp-br">ROOM</h1>
+            <div class="scroll-indicator">
+                <span>SCROLL</span>
+                <div class="arrow down"></div>
+            </div>
+        </section>
+
+        <!-- 1st STEP Section -->
+        <section class="section step-section" id="step1">
+            <div class="step-card">
+                <h2 class="step-title">1st STEP</h2>
+                <p class="instruction">
+                    壁にある謎を全て解き、<br class="sp-br">答えの最初の文字を並び替えて<br class="sp-br">一般的な単語にし、<br class="pc-br">
+                    下の欄に入力しよう
+                </p>
+                <div class="input-group">
+                    <input type="text" id="answer1" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit1" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback1" class="feedback-container">
+                    <!-- Red circle will be appended here via JS -->
+                </div>
+            </div>
+
+            <div class="unlock-indicator hidden" id="unlock-step2">
+                <span>NEXT</span>
+                <div class="arrow down"></div>
+            </div>
+        </section>
+
+        <!-- 2nd STEP Section -->
+        <section class="section step-section" id="step2">
+            <div class="step-card">
+                <h2 class="step-title">2nd STEP</h2>
+                <p class="instruction">
+                    封筒1の中の謎を解こう。<br>
+                    その際、4つのアイテムを取り出して謎の枠に入れ、謎を成立させてから解こう。<br class="sp-br">
+                    解けたら答えの最初の文字を並び替えて<br class="pc-br">
+                    一般的な単語にし、下の欄に入力しよう。
+                </p>
+                <div class="item-container">
+                    <p class="item-note">※アイテムにはこのマークがついている</p>
+                    <img src="item.png" alt="アイテムマーク" class="item-image">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="answer2" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit2" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback2" class="feedback-container"></div>
+            </div>
+
+            <div class="unlock-indicator hidden" id="unlock-step3">
+                <span>NEXT</span>
+                <div class="arrow down"></div>
+            </div>
+        </section>
+
+        <!-- 3rd STEP Section -->
+        <section class="section step-section" id="step3">
+            <div class="step-card">
+                <h2 class="step-title">3rd STEP</h2>
+                <p class="instruction">
+                    最初を最後にしよう。<br class="sp-br">出てきた2つの答えを下の欄に入力しよう。
+                </p>
+                <div class="input-group" style="margin-bottom: 1rem;">
+                    <input type="text" id="answer3_1" placeholder="答えを入力" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="answer3_2" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit3" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback3" class="feedback-container"></div>
+            </div>
+
+            <div class="unlock-indicator hidden" id="unlock-step4">
+                <span>NEXT</span>
+                <div class="arrow down"></div>
+            </div>
+        </section>
+
+        <!-- Final STEP Section -->
+        <section class="section step-section" id="step4">
+            <div class="step-card">
+                <div class="input-group" style="margin-top: 2rem;">
+                    <input type="text" id="answer4" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit4" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback4" class="feedback-container"></div>
+            </div>
+
+            <div class="unlock-indicator hidden" id="unlock-step5">
+                <span>NEXT</span>
+                <div class="arrow down"></div>
+            </div>
+        </section>
+
+        <!-- LAST STEP Section -->
+        <section class="section step-section" id="last-step">
+            <div class="step-card">
+                <h2 class="step-title">LAST STEP</h2>
+                <p class="instruction">
+                    封筒2の中の謎を解こう
+                </p>
+                <div class="input-group">
+                    <input type="text" id="answer5" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit5" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback5" class="feedback-container"></div>
+            </div>
+
+            <div class="unlock-indicator hidden" id="unlock-clear">
+                <span>NEXT</span>
+                <div class="arrow down"></div>
+            </div>
+        </section>
+
+        <!-- Clear Section -->
+        <section class="section step-section" id="clear-section">
+            <div class="step-card" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+                <img src="clear.png" alt="Clear" style="max-width: 100%; height: auto;">
+                <a href="https://twitter.com/intent/tweet?text=RIDDLE%20ROOM%E3%82%92%E3%82%AF%E3%83%AA%E3%82%A2%E3%81%97%E3%81%9F%EF%BC%81%0A%23%E7%A9%BA%E7%A9%BA" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background-color: var(--accent); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: opacity 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">ネタバレのない感想ポストはこちら！</a>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
