@@ -77,8 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let maxScroll = phase1Scroll;
 
-    let maxScroll = phase1Scroll;
-
     function updateBodyHeight() {
         // Set body height to allow native scrolling
         document.body.style.height = `${maxScroll + window.innerHeight}px`;
