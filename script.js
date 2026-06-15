@@ -712,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.3 (Reverted to original)');
+                alert('Version: 1.0.4 (CSS White Gap Fix)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
