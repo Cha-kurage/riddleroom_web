@@ -77,44 +77,76 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let maxScroll = phase1Scroll;
 
+    let baseWindowHeight = window.innerHeight;
+    let baseWindowWidth = window.innerWidth;
+    const scrollContainer = document.querySelector('.scroll-container');
+    
+    function setFixedViewport() {
+        if (scrollContainer) {
+            scrollContainer.style.height = `${baseWindowHeight}px`;
+        }
+    }
+    setFixedViewport();
+
+    window.addEventListener('resize', () => {
+        // 横幅が変わった時だけ（デバイスの向き変更など）高さを更新する
+        if (window.innerWidth !== baseWindowWidth) {
+            baseWindowWidth = window.innerWidth;
+            baseWindowHeight = window.innerHeight;
+            setFixedViewport();
+            updateBodyHeight();
+        }
+    });
+
     function updateBodyHeight() {
         // Set body height to allow native scrolling
-        document.body.style.height = `${maxScroll + window.innerHeight}px`;
+        document.body.style.height = `${maxScroll + baseWindowHeight}px`;
     }
     updateBodyHeight();
 
+    // Helper for smooth scrolling with keyboard blur
+    const scrollToWithBlur = (targetY) => {
+        if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+        }
+        // スマホでキーボードが閉じる時間を少し待ってからスクロール
+        setTimeout(() => {
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+        }, 150);
+    };
+
     // Smooth scroll for indicators
     scrollIndicatorDown.addEventListener('click', () => {
-        window.scrollTo({ top: phase1Scroll, behavior: 'smooth' });
+        scrollToWithBlur(phase1Scroll);
     });
 
     if (unlockStep2Indicator) {
         unlockStep2Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 2, behavior: 'smooth' });
+            scrollToWithBlur(phase1Scroll * 2);
         });
     }
 
     if (unlockStep3Indicator) {
         unlockStep3Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 3, behavior: 'smooth' });
+            scrollToWithBlur(phase1Scroll * 3);
         });
     }
 
     if (unlockStep4Indicator) {
         unlockStep4Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 4, behavior: 'smooth' });
+            scrollToWithBlur(phase1Scroll * 4);
         });
     }
 
     if (unlockStep5Indicator) {
         unlockStep5Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 5, behavior: 'smooth' });
+            scrollToWithBlur(phase1Scroll * 5);
         });
     }
 
     if (unlockClearIndicator) {
         unlockClearIndicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 6, behavior: 'smooth' });
+            scrollToWithBlur(phase1Scroll * 6);
         });
     }
 
