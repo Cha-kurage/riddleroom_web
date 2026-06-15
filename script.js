@@ -77,41 +77,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let maxScroll = phase1Scroll;
 
-    let baseWindowHeight = window.innerHeight;
-    let baseWindowWidth = window.innerWidth;
     const scrollContainer = document.querySelector('.scroll-container');
-    
-    function setFixedViewport() {
-        if (scrollContainer) {
-            scrollContainer.style.height = `${baseWindowHeight}px`;
+    let isKeyboardOpen = false;
+    let baseWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
+
+    function applyViewport() {
+        if (!isKeyboardOpen && scrollContainer) {
+            scrollContainer.style.height = `${window.innerHeight}px`;
         }
     }
-    setFixedViewport();
-
-    window.addEventListener('resize', () => {
-        const newWidth = window.innerWidth;
-        const newHeight = window.innerHeight;
-
-        if (newWidth !== baseWindowWidth) {
-            // 横幅が変わった時（デバイスの向き変更など）
-            baseWindowWidth = newWidth;
-            baseWindowHeight = newHeight;
-            setFixedViewport();
-            updateBodyHeight();
-        } else if (newHeight > baseWindowHeight) {
-            // アドレスバーが引っ込んで表示領域が縦に広がった時
-            baseWindowHeight = newHeight;
-            setFixedViewport();
-            updateBodyHeight();
-        }
-        // 高さが減った時（キーボード出現等）は更新しないことでガタつきを防ぐ
-    });
 
     function updateBodyHeight() {
-        // Set body height to allow native scrolling
-        document.body.style.height = `${maxScroll + baseWindowHeight}px`;
+        if (!isKeyboardOpen) {
+            document.body.style.height = `${maxScroll + window.innerHeight}px`;
+        }
     }
+
+    applyViewport();
     updateBodyHeight();
+
+    window.addEventListener('resize', () => {
+        const currentWidth = window.innerWidth;
+        const currentHeight = window.innerHeight;
+
+        if (currentWidth !== baseWidth) {
+            baseWidth = currentWidth;
+            isKeyboardOpen = false;
+        } else {
+            if (lastHeight - currentHeight > 150) {
+                isKeyboardOpen = true; // Height decreased significantly -> Keyboard opened
+            } else if (currentHeight - lastHeight > 150) {
+                isKeyboardOpen = false; // Height increased significantly -> Keyboard closed
+            }
+        }
+        lastHeight = currentHeight;
+
+        applyViewport();
+        updateBodyHeight();
+    });
 
     // Helper for smooth scrolling with keyboard blur
     const scrollToWithBlur = (targetY) => {
@@ -753,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.1 (Mobile Fixes Applied)');
+                alert('Version: 1.0.2 (Mobile Fixes Applied)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
