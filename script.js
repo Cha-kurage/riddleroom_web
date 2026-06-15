@@ -742,6 +742,27 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(render);
     }
 
+    // Version Trigger (Tap 'M' 5 times)
+    const versionTrigger = document.getElementById('version-trigger');
+    let tapCount = 0;
+    let tapTimeout;
+    if (versionTrigger) {
+        // Prevent double-tap zoom on mobile to allow fast tapping
+        versionTrigger.style.touchAction = 'manipulation';
+        versionTrigger.addEventListener('click', () => {
+            tapCount++;
+            clearTimeout(tapTimeout);
+            if (tapCount >= 5) {
+                alert('Version: 1.0.1 (Mobile Fixes Applied)');
+                tapCount = 0;
+            } else {
+                tapTimeout = setTimeout(() => {
+                    tapCount = 0;
+                }, 1000); // Reset count if more than 1s passes between taps
+            }
+        });
+    }
+
     // Start loop
     render();
 });
