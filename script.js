@@ -89,13 +89,22 @@ document.addEventListener('DOMContentLoaded', () => {
     setFixedViewport();
 
     window.addEventListener('resize', () => {
-        // 横幅が変わった時だけ（デバイスの向き変更など）高さを更新する
-        if (window.innerWidth !== baseWindowWidth) {
-            baseWindowWidth = window.innerWidth;
-            baseWindowHeight = window.innerHeight;
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+
+        if (newWidth !== baseWindowWidth) {
+            // 横幅が変わった時（デバイスの向き変更など）
+            baseWindowWidth = newWidth;
+            baseWindowHeight = newHeight;
+            setFixedViewport();
+            updateBodyHeight();
+        } else if (newHeight > baseWindowHeight) {
+            // アドレスバーが引っ込んで表示領域が縦に広がった時
+            baseWindowHeight = newHeight;
             setFixedViewport();
             updateBodyHeight();
         }
+        // 高さが減った時（キーボード出現等）は更新しないことでガタつきを防ぐ
     });
 
     function updateBodyHeight() {
