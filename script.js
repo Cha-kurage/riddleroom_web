@@ -77,89 +77,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let maxScroll = phase1Scroll;
 
-    const scrollContainer = document.querySelector('.scroll-container');
-    let isKeyboardOpen = false;
-    let baseWidth = window.innerWidth;
-    let lastHeight = window.innerHeight;
-
-    function applyViewport() {
-        if (!isKeyboardOpen && scrollContainer) {
-            scrollContainer.style.height = `${window.innerHeight}px`;
-        }
-    }
+    let maxScroll = phase1Scroll;
 
     function updateBodyHeight() {
-        if (!isKeyboardOpen) {
-            document.body.style.height = `${maxScroll + window.innerHeight}px`;
-        }
+        // Set body height to allow native scrolling
+        document.body.style.height = `${maxScroll + window.innerHeight}px`;
     }
-
-    applyViewport();
     updateBodyHeight();
-
-    window.addEventListener('resize', () => {
-        const currentWidth = window.innerWidth;
-        const currentHeight = window.innerHeight;
-
-        if (currentWidth !== baseWidth) {
-            baseWidth = currentWidth;
-            isKeyboardOpen = false;
-        } else {
-            if (lastHeight - currentHeight > 150) {
-                isKeyboardOpen = true; // Height decreased significantly -> Keyboard opened
-            } else if (currentHeight - lastHeight > 150) {
-                isKeyboardOpen = false; // Height increased significantly -> Keyboard closed
-            }
-        }
-        lastHeight = currentHeight;
-
-        applyViewport();
-        updateBodyHeight();
-    });
-
-    // Helper for smooth scrolling with keyboard blur
-    const scrollToWithBlur = (targetY) => {
-        if (document.activeElement && document.activeElement.blur) {
-            document.activeElement.blur();
-        }
-        // スマホでキーボードが閉じる時間を少し待ってからスクロール
-        setTimeout(() => {
-            window.scrollTo({ top: targetY, behavior: 'smooth' });
-        }, 150);
-    };
 
     // Smooth scroll for indicators
     scrollIndicatorDown.addEventListener('click', () => {
-        scrollToWithBlur(phase1Scroll);
+        window.scrollTo({ top: phase1Scroll, behavior: 'smooth' });
     });
 
     if (unlockStep2Indicator) {
         unlockStep2Indicator.addEventListener('click', () => {
-            scrollToWithBlur(phase1Scroll * 2);
+            window.scrollTo({ top: phase1Scroll * 2, behavior: 'smooth' });
         });
     }
 
     if (unlockStep3Indicator) {
         unlockStep3Indicator.addEventListener('click', () => {
-            scrollToWithBlur(phase1Scroll * 3);
+            window.scrollTo({ top: phase1Scroll * 3, behavior: 'smooth' });
         });
     }
 
     if (unlockStep4Indicator) {
         unlockStep4Indicator.addEventListener('click', () => {
-            scrollToWithBlur(phase1Scroll * 4);
+            window.scrollTo({ top: phase1Scroll * 4, behavior: 'smooth' });
         });
     }
 
     if (unlockStep5Indicator) {
         unlockStep5Indicator.addEventListener('click', () => {
-            scrollToWithBlur(phase1Scroll * 5);
+            window.scrollTo({ top: phase1Scroll * 5, behavior: 'smooth' });
         });
     }
 
     if (unlockClearIndicator) {
         unlockClearIndicator.addEventListener('click', () => {
-            scrollToWithBlur(phase1Scroll * 6);
+            window.scrollTo({ top: phase1Scroll * 6, behavior: 'smooth' });
         });
     }
 
@@ -757,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.2 (Mobile Fixes Applied)');
+                alert('Version: 1.0.3 (Reverted to original)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
