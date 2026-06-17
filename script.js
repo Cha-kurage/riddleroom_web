@@ -1,4 +1,13 @@
+// Prevent browser from restoring previous scroll position on reload
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Force scroll to top again after DOM is ready
+    window.scrollTo(0, 0);
+
     // Input Elements
     const answer1Input = document.getElementById('answer1');
     const submit1Btn = document.getElementById('submit1');
@@ -732,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.6 (Last step logic updates)');
+                alert('Version: 1.0.8 (Remove 120vh white gap fix)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
