@@ -50,7 +50,8 @@ html {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -266,10 +267,6 @@ input[type="text"]::placeholder {
 @media (max-width: 768px) {
     .pc-br { display: none; }
     .pc-space { display: none; }
-    
-    #step2 .step-card {
-        margin-top: -10vh;
-    }
 }
 
 /* Removed hidden states as opacity and pointer events are directly managed by JS */
