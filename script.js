@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastStepUnlocked = false;
     let lastStepCleared = false;
+    let lastStepIntermediateCleared = false;
     let lastStepUnlockedTime = 0;
 
     let clearUnlocked = false;
@@ -349,14 +350,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const answer = answer5Input.value.trim();
 
-        if (answer === 'カメラ' || answer === 'かめら') {
-            lastStepCleared = true;
-            handleSuccess5();
-        } else if (answer !== '') {
-            // Shake effect
-            answer5Input.style.animation = 'none';
-            void answer5Input.offsetWidth;
-            answer5Input.style.animation = 'shake 0.5s';
+        if (!lastStepIntermediateCleared) {
+            const isLight = ['ライト', 'らいと', 'あかり', 'アカリ'].includes(answer);
+            if (isLight) {
+                lastStepIntermediateCleared = true;
+                feedback5Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="line-height: 1.6; color: var(--text-main);">
+                            どうやら天井の${answer}は取り外せるようだ。
+                        </p>
+                    </div>
+                `;
+                answer5Input.value = '';
+            } else if (answer !== '') {
+                // Shake effect
+                answer5Input.style.animation = 'none';
+                void answer5Input.offsetWidth;
+                answer5Input.style.animation = 'shake 0.5s';
+            }
+        } else {
+            const isCamera = ['カメラ', 'かめら'].includes(answer);
+            if (isCamera) {
+                lastStepCleared = true;
+                feedback5Container.innerHTML = '';
+                handleSuccess5();
+            } else if (answer !== '') {
+                // Shake effect
+                answer5Input.style.animation = 'none';
+                void answer5Input.offsetWidth;
+                answer5Input.style.animation = 'shake 0.5s';
+            }
         }
     };
 
@@ -370,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="success-message">
                     <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
                     <p class="success-text" style="line-height: 1.6;">
-                        おめでとう！全ての謎を解き明かした！
+                        リドルルームの全ての謎を解いた！
                     </p>
                 </div>
             `;
@@ -709,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.5 (Text and underline updates)');
+                alert('Version: 1.0.6 (Last step logic updates)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
