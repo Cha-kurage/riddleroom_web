@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.9 (Standardize light name)');
+                alert('Version: 1.0.10 (Fix Chrome keyboard white gap)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
