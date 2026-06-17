@@ -266,6 +266,10 @@ input[type="text"]::placeholder {
 @media (max-width: 768px) {
     .pc-br { display: none; }
     .pc-space { display: none; }
+    
+    #step2 .step-card {
+        margin-top: -10vh;
+    }
 }
 
 /* Removed hidden states as opacity and pointer events are directly managed by JS */
