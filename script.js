@@ -273,9 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
             feedback3Container.innerHTML = `
                 <div class="success-message">
                     <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
-                    <p class="success-text" style="line-height: 1.6;">
-                        見えないところを見よう
-                    </p>
                 </div>
             `;
         }, 600);
@@ -712,7 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.4 (CSS White Gap Fix)');
+                alert('Version: 1.0.5 (Text and underline updates)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
