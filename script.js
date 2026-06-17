@@ -1,3 +1,17 @@
+// Safari Fallback for Visual Viewport
+function syncVisualViewport() {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const root = document.documentElement;
+    root.style.setProperty('--vv-height', `${vv.height}px`);
+    root.style.setProperty('--vv-offset-top', `${vv.offsetTop}px`);
+}
+syncVisualViewport();
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncVisualViewport);
+    window.visualViewport.addEventListener('scroll', syncVisualViewport);
+}
+
 // Prevent browser from restoring previous scroll position on reload
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
@@ -747,7 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.10 (Fix Chrome keyboard white gap)');
+                alert('Version: 1.0.11 (Deep Research Architecture)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {

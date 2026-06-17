@@ -33,10 +33,10 @@ html {
 /* Scroll Framework Layering */
 .scroll-container {
     position: fixed;
-    top: 0;
+    top: var(--vv-offset-top, 0px);
     left: 0;
     width: 100%;
-    height: 120vh; /* Extended to prevent Chrome keyboard white gap */
+    height: var(--vv-height, 100dvh);
     overflow: hidden;
     background-image: url('background.png');
     background-size: cover;
@@ -50,8 +50,7 @@ html {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
