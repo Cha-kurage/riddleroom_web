@@ -360,13 +360,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const answer = answer5Input.value.trim();
 
         if (!lastStepIntermediateCleared) {
-            const isLight = ['ライト', 'らいと', 'あかり', 'アカリ'].includes(answer);
-            if (isLight) {
+            let displayWord = "";
+            if (['ライト', 'らいと'].includes(answer)) {
+                displayWord = 'ライト';
+            } else if (['あかり', 'アカリ', '明かり'].includes(answer)) {
+                displayWord = '明かり';
+            }
+
+            if (displayWord !== "") {
                 lastStepIntermediateCleared = true;
                 feedback5Container.innerHTML = `
                     <div class="success-message">
                         <p class="success-text" style="line-height: 1.6; color: var(--text-main);">
-                            どうやら天井の${answer}は取り外せるようだ。
+                            どうやら天井の${displayWord}は取り外せるようだ。
                         </p>
                     </div>
                 `;
@@ -741,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tapCount++;
             clearTimeout(tapTimeout);
             if (tapCount >= 5) {
-                alert('Version: 1.0.8 (Remove 120vh white gap fix)');
+                alert('Version: 1.0.9 (Standardize light name)');
                 tapCount = 0;
             } else {
                 tapTimeout = setTimeout(() => {
