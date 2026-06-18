@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Android Chrome Keyboard Fix
+    if (window.visualViewport) {
+        const updateViewport = () => {
+            document.documentElement.style.setProperty('--viewport-height', `${window.visualViewport.height}px`);
+        };
+        window.visualViewport.addEventListener('resize', updateViewport);
+        updateViewport();
+    }
+
     // Developer Reset Logic
     const devArea = document.createElement('div');
     devArea.style.position = 'fixed';
