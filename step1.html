@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+    <title>1st STEP - RIDDLE ROOM</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <a href="hint.html" class="hint-link">ヒント</a>
+    <a href="https://x.com/monushi_nazo" target="_blank" rel="noopener noreferrer" class="report-link">問題を報告する</a>
+    
+    <div class="scroll-container">
+        <section class="section">
+            <div class="step-card">
+                <h2 class="step-title">1st STEP</h2>
+                <p class="instruction">
+                    壁にある謎を全て解き、<br class="sp-br">答えの<span style="text-decoration: underline; text-decoration-color: var(--red-circle); text-decoration-thickness: 2px; text-underline-offset: 4px;">最初</span>の文字を並び替えて<br class="sp-br">一般的な単語にし、<br class="pc-br">
+                    下の欄に入力しよう
+                </p>
+                <div class="input-group">
+                    <input type="text" id="answer1" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit1" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback1" class="feedback-container">
+                    <!-- Feedback will be appended here via JS -->
+                </div>
+                <a href="step2.html" id="next-btn1" class="next-button hidden">NEXT STEP</a>
+            </div>
+        </section>
+    </div>
+
+    <a href="rules.html" class="prev-button">◀ 注意事項へ戻る</a>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,776 +1,442 @@
-// Safari Fallback for Visual Viewport
-function syncVisualViewport() {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const root = document.documentElement;
-    root.style.setProperty('--vv-height', `${vv.height}px`);
-    root.style.setProperty('--vv-offset-top', `${vv.offsetTop}px`);
-}
-syncVisualViewport();
-if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', syncVisualViewport);
-    window.visualViewport.addEventListener('scroll', syncVisualViewport);
-}
-
-// Prevent browser from restoring previous scroll position on reload
-if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-}
-window.scrollTo(0, 0);
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Force scroll to top again after DOM is ready
-    window.scrollTo(0, 0);
+    // Developer Reset Logic
+    const devArea = document.createElement('div');
+    devArea.style.position = 'fixed';
+    devArea.style.bottom = '0';
+    devArea.style.right = '0';
+    devArea.style.width = '80px';
+    devArea.style.height = '80px';
+    devArea.style.zIndex = '9999';
+    devArea.style.cursor = 'default';
+    document.body.appendChild(devArea);
 
-    // Input Elements
-    const answer1Input = document.getElementById('answer1');
-    const submit1Btn = document.getElementById('submit1');
-    const feedback1Container = document.getElementById('feedback1');
+    let devClickCount = 0;
+    let devClickTimer = null;
+    devArea.addEventListener('click', () => {
+        devClickCount++;
+        if (devClickCount === 1) {
+            devClickTimer = setTimeout(() => {
+                devClickCount = 0;
+            }, 2000);
+        }
+        if (devClickCount >= 5) {
+            clearTimeout(devClickTimer);
+            localStorage.clear();
+            alert('開発用リセット：すべてのデータを初期化しました。タイトルに戻ります。');
+            window.location.href = 'index.html';
+        }
+    });
 
-    // UI Elements
-    const titleSection = document.querySelector('.title-section');
-    const mainTitle = document.querySelector('.main-title');
-    const scrollIndicatorDown = document.querySelector('.title-section .scroll-indicator');
-    const reportLink = document.getElementById('report-link');
-
-    const step1Section = document.getElementById('step1');
-    const step1Card = step1Section.querySelector('.step-card');
-    const unlockStep2Indicator = document.getElementById('unlock-step2');
-
-    const step2Section = document.getElementById('step2');
-    const step2Card = step2Section.querySelector('.step-card');
-    const unlockStep3Indicator = document.getElementById('unlock-step3');
-
-    const answer2Input = document.getElementById('answer2');
-    const submit2Btn = document.getElementById('submit2');
-    const feedback2Container = document.getElementById('feedback2');
-
-    const step3Section = document.getElementById('step3');
-    const step3Card = step3Section.querySelector('.step-card');
-
-    const answer3_1Input = document.getElementById('answer3_1');
-    const answer3_2Input = document.getElementById('answer3_2');
-    const submit3Btn = document.getElementById('submit3');
-    const feedback3Container = document.getElementById('feedback3');
+    // Save progress logic
+    const stepIndices = { 'index':0, 'rules':1, 'step1':2, 'step2':3, 'step3':4, 'last_step':5, 'clear':6 };
     
-    const unlockStep4Indicator = document.getElementById('unlock-step4');
-    const step4Section = document.getElementById('step4');
-    const step4Card = step4Section.querySelector('.step-card');
-    
-    const answer4Input = document.getElementById('answer4');
-    const submit4Btn = document.getElementById('submit4');
-    const feedback4Container = document.getElementById('feedback4');
-
-    const unlockStep5Indicator = document.getElementById('unlock-step5');
-    const lastStepSection = document.getElementById('last-step');
-    const lastStepCard = lastStepSection.querySelector('.step-card');
-
-    const answer5Input = document.getElementById('answer5');
-    const submit5Btn = document.getElementById('submit5');
-    const feedback5Container = document.getElementById('feedback5');
-
-    const unlockClearIndicator = document.getElementById('unlock-clear');
-    const clearSection = document.getElementById('clear-section');
-    const clearCard = clearSection ? clearSection.querySelector('.step-card') : null;
-
-    let step2Unlocked = false;
-    let step1Cleared = false;
-    let step2UnlockedTime = 0;
-
-    let step3Unlocked = false;
-    let step2Cleared = false;
-    let step3UnlockedTime = 0;
-
-    let step4Unlocked = false;
-    let step4Cleared = false;
-    let step4UnlockedTime = 0;
-
-    let lastStepUnlocked = false;
-    let lastStepCleared = false;
-    let lastStepIntermediateCleared = false;
-    let lastStepUnlockedTime = 0;
-
-    let clearUnlocked = false;
-    let clearUnlockedTime = 0;
-
-    // Scroll configuration
-    const fadeDistance = 600; // フェードにかかるスクロール距離
-    const gapDistance = 800;  // 完全に真っ白になる「間」のスクロール距離（ここを増やすと間が長くなります）
-    const phase1Scroll = fadeDistance + gapDistance + fadeDistance;
-    const moveDistance = 350;
-
-    let maxScroll = phase1Scroll;
-
-    function updateBodyHeight() {
-        // Set body height to allow native scrolling
-        document.body.style.height = `${maxScroll + window.innerHeight}px`;
-    }
-    updateBodyHeight();
-
-    // Smooth scroll for indicators
-    scrollIndicatorDown.addEventListener('click', () => {
-        window.scrollTo({ top: phase1Scroll, behavior: 'smooth' });
-    });
-
-    if (unlockStep2Indicator) {
-        unlockStep2Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 2, behavior: 'smooth' });
-        });
-    }
-
-    if (unlockStep3Indicator) {
-        unlockStep3Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 3, behavior: 'smooth' });
-        });
-    }
-
-    if (unlockStep4Indicator) {
-        unlockStep4Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 4, behavior: 'smooth' });
-        });
-    }
-
-    if (unlockStep5Indicator) {
-        unlockStep5Indicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 5, behavior: 'smooth' });
-        });
-    }
-
-    if (unlockClearIndicator) {
-        unlockClearIndicator.addEventListener('click', () => {
-            window.scrollTo({ top: phase1Scroll * 6, behavior: 'smooth' });
-        });
-    }
-
-    // Function to check answer 1
-    const checkAnswer1 = () => {
-        if (step1Cleared) return;
-
-        const answer = answer1Input.value.trim();
-
-        if (answer === 'イラスト' || answer === 'いらすと') {
-            step1Cleared = true;
-            handleSuccess1();
-        } else if (answer !== '') {
-            // Shake effect
-            answer1Input.style.animation = 'none';
-            void answer1Input.offsetWidth;
-            answer1Input.style.animation = 'shake 0.5s';
+    const saveProgress = (step) => {
+        const current = localStorage.getItem('riddleroom_progress');
+        if (!current || stepIndices[step] > (stepIndices[current] || 0)) {
+            localStorage.setItem('riddleroom_progress', step);
         }
     };
 
-    const handleSuccess1 = () => {
-        inputSuccessStyle(answer1Input);
-        answer1Input.disabled = true;
-        submit1Btn.disabled = true;
-
-        // 答えが判定されてから一瞬後（600ms後）にメッセージを表示する
-        setTimeout(() => {
-            feedback1Container.innerHTML = `
-                <div class="success-message">
-                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
-                    <p class="success-text" style="line-height: 1.6;">
-                        ダイヤル錠の番号は123<br>
-                        天井をあけ、封筒1をひらこう
-                    </p>
-                </div>
-            `;
-        }, 600);
-
-        // メッセージが出てからさらに一瞬後（計1200ms後）にNEXT STEP矢印を出す
-        setTimeout(() => {
-            step2Unlocked = true;
-            step2UnlockedTime = Date.now();
-
-            // Extend page height to allow scrolling to Step 2
-            maxScroll = phase1Scroll * 2;
-            updateBodyHeight();
-        }, 1200);
+    const getProgress = () => {
+        return localStorage.getItem('riddleroom_progress') || 'index';
     };
 
-    submit1Btn.addEventListener('click', checkAnswer1);
-    answer1Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            checkAnswer1();
-        }
-    });
-
-    // Function to check answer 2
-    const checkAnswer2 = () => {
-        if (step2Cleared) return;
-
-        const answer = answer2Input.value.trim();
-
-        if (answer === 'クエスト' || answer === 'くえすと') {
-            step2Cleared = true;
-            handleSuccess2();
-        } else if (answer !== '') {
-            // Shake effect
-            answer2Input.style.animation = 'none';
-            void answer2Input.offsetWidth;
-            answer2Input.style.animation = 'shake 0.5s';
-        }
-    };
-
-    const handleSuccess2 = () => {
-        inputSuccessStyle(answer2Input);
-        answer2Input.disabled = true;
-        submit2Btn.disabled = true;
-
-        setTimeout(() => {
-            feedback2Container.innerHTML = `
-                <div class="success-message">
-                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
-                    <p class="success-text" style="line-height: 1.6;">
-                        使ったアイテムは元の場所に戻そう
-                    </p>
-                </div>
-            `;
-        }, 600);
-
-        setTimeout(() => {
-            step3Unlocked = true;
-            step3UnlockedTime = Date.now();
-
-            maxScroll = phase1Scroll * 3;
-            updateBodyHeight();
-        }, 1200);
-    };
-
-    submit2Btn.addEventListener('click', checkAnswer2);
-    answer2Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            checkAnswer2();
-        }
-    });
-
-    // Function to check answer 3
-    let step3Cleared = false;
-    const checkAnswer3 = () => {
-        if (step3Cleared) return;
-
-        const ans1 = answer3_1Input.value.trim();
-        const ans2 = answer3_2Input.value.trim();
-
-        // 判定ロジック（順不同でもOKとする）
-        const isOndoku = (val) => ['おんどく', 'オンドク', '音読'].includes(val);
-        const isChiritori = (val) => ['ちりとり', 'チリトリ'].includes(val);
-
-        const correct = (isOndoku(ans1) && isChiritori(ans2)) || (isChiritori(ans1) && isOndoku(ans2));
-
-        if (correct) {
-            step3Cleared = true;
-            handleSuccess3();
-        } else {
-            // Shake effect for wrong/empty inputs
-            if (ans1 !== '' && !(isOndoku(ans1) || isChiritori(ans1))) {
-                answer3_1Input.style.animation = 'none';
-                void answer3_1Input.offsetWidth;
-                answer3_1Input.style.animation = 'shake 0.5s';
-            }
-            if (ans2 !== '' && !(isOndoku(ans2) || isChiritori(ans2))) {
-                answer3_2Input.style.animation = 'none';
-                void answer3_2Input.offsetWidth;
-                answer3_2Input.style.animation = 'shake 0.5s';
-            }
-            // Shake both if both empty when submitted
-            if (ans1 === '' && ans2 === '') {
-                answer3_1Input.style.animation = 'none';
-                void answer3_1Input.offsetWidth;
-                answer3_1Input.style.animation = 'shake 0.5s';
-                
-                answer3_2Input.style.animation = 'none';
-                void answer3_2Input.offsetWidth;
-                answer3_2Input.style.animation = 'shake 0.5s';
-            }
-        }
-    };
-
-    const handleSuccess3 = () => {
-        inputSuccessStyle(answer3_1Input);
-        inputSuccessStyle(answer3_2Input);
-        answer3_1Input.disabled = true;
-        answer3_2Input.disabled = true;
-        submit3Btn.disabled = true;
-
-        setTimeout(() => {
-            feedback3Container.innerHTML = `
-                <div class="success-message">
-                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
-                </div>
-            `;
-        }, 600);
-        
-        setTimeout(() => {
-            step4Unlocked = true;
-            step4UnlockedTime = Date.now();
-            
-            maxScroll = phase1Scroll * 4;
-            updateBodyHeight();
-        }, 1200);
-    };
-
-    submit3Btn.addEventListener('click', checkAnswer3);
-    answer3_1Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAnswer3();
-    });
-    answer3_2Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAnswer3();
-    });
-
-    // Function to check answer 4
-    const checkAnswer4 = () => {
-        if (step4Cleared) return;
-
-        const answer = answer4Input.value.trim();
-
-        if (answer === 'さいご' || answer === '最後' || answer === 'サイゴ') {
-            step4Cleared = true;
-            handleSuccess4();
-        } else if (answer !== '') {
-            // Shake effect
-            answer4Input.style.animation = 'none';
-            void answer4Input.offsetWidth;
-            answer4Input.style.animation = 'shake 0.5s';
-        }
-    };
-
-    const handleSuccess4 = () => {
-        inputSuccessStyle(answer4Input);
-        answer4Input.disabled = true;
-        submit4Btn.disabled = true;
-
-        setTimeout(() => {
-            feedback4Container.innerHTML = `
-                <div class="success-message">
-                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
-                    <p class="success-text" style="line-height: 1.6;">
-                        封筒2をひらこう
-                    </p>
-                </div>
-            `;
-        }, 600);
-
-        setTimeout(() => {
-            lastStepUnlocked = true;
-            lastStepUnlockedTime = Date.now();
-
-            maxScroll = phase1Scroll * 5;
-            updateBodyHeight();
-        }, 1200);
-    };
-
-    submit4Btn.addEventListener('click', checkAnswer4);
-    answer4Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            checkAnswer4();
-        }
-    });
-
-    // Function to check answer 5
-    const checkAnswer5 = () => {
-        if (lastStepCleared) return;
-
-        const answer = answer5Input.value.trim();
-
-        if (!lastStepIntermediateCleared) {
-            let displayWord = "";
-            if (['ライト', 'らいと'].includes(answer)) {
-                displayWord = 'ライト';
-            } else if (['あかり', 'アカリ', '明かり'].includes(answer)) {
-                displayWord = '明かり';
-            }
-
-            if (displayWord !== "") {
-                lastStepIntermediateCleared = true;
-                feedback5Container.innerHTML = `
-                    <div class="success-message">
-                        <p class="success-text" style="line-height: 1.6; color: var(--text-main);">
-                            どうやら天井の${displayWord}は取り外せるようだ。
-                        </p>
-                    </div>
-                `;
-                answer5Input.value = '';
-            } else if (answer !== '') {
-                // Shake effect
-                answer5Input.style.animation = 'none';
-                void answer5Input.offsetWidth;
-                answer5Input.style.animation = 'shake 0.5s';
-            }
-        } else {
-            const isCamera = ['カメラ', 'かめら'].includes(answer);
-            if (isCamera) {
-                lastStepCleared = true;
-                feedback5Container.innerHTML = '';
-                handleSuccess5();
-            } else if (answer !== '') {
-                // Shake effect
-                answer5Input.style.animation = 'none';
-                void answer5Input.offsetWidth;
-                answer5Input.style.animation = 'shake 0.5s';
-            }
-        }
-    };
-
-    const handleSuccess5 = () => {
-        inputSuccessStyle(answer5Input);
-        answer5Input.disabled = true;
-        submit5Btn.disabled = true;
-
-        setTimeout(() => {
-            feedback5Container.innerHTML = `
-                <div class="success-message">
-                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
-                    <p class="success-text" style="line-height: 1.6;">
-                        リドルルームの全ての謎を解いた！
-                    </p>
-                </div>
-            `;
-        }, 600);
-
-        setTimeout(() => {
-            clearUnlocked = true;
-            clearUnlockedTime = Date.now();
-
-            maxScroll = phase1Scroll * 6;
-            updateBodyHeight();
-        }, 1200);
-    };
-
-    submit5Btn.addEventListener('click', checkAnswer5);
-    answer5Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            checkAnswer5();
-        }
-    });
-
-    function inputSuccessStyle(inputEl) {
+    // Helper for input style
+    const inputSuccessStyle = (inputEl) => {
         inputEl.style.borderColor = '#4CAF50';
         inputEl.style.color = '#4CAF50';
         const submitBtn = inputEl.parentElement.querySelector('.submit-btn');
         if (submitBtn) {
             submitBtn.style.color = '#4CAF50';
         }
-    }
+    };
 
-    // Add CSS for shake animation dynamically
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-    `;
-    document.head.appendChild(style);
+    const shakeInput = (inputEl) => {
+        inputEl.style.animation = 'none';
+        void inputEl.offsetWidth;
+        inputEl.style.animation = 'shake 0.5s';
+    };
 
-    // Main GSAP-style Scroll Render Loop
-    function render() {
-        const s = window.scrollY;
-
-        // --- 1. Title Section ---
-        let titleOpacity = 1 - (s / fadeDistance);
-        titleOpacity = Math.max(0, Math.min(1, titleOpacity));
-
-        mainTitle.style.opacity = titleOpacity;
-
-        // Move title dynamically based on moveDistance
-        let titleY = (s / fadeDistance) * -moveDistance;
-        mainTitle.style.transform = `translateY(${titleY}px)`;
-
-        scrollIndicatorDown.style.opacity = titleOpacity; // Fade indicator directly with title
-        if (reportLink) reportLink.style.opacity = titleOpacity;
-        titleSection.style.pointerEvents = titleOpacity > 0 ? 'auto' : 'none';
-
-        // --- 2. Step 1 Section ---
-        // Fades in starting at (phase1Scroll - fadeDistance), fully visible at phase1Scroll.
-        let step1Progress = (s - (phase1Scroll - fadeDistance)) / fadeDistance;
-        step1Progress = Math.max(0, Math.min(1, step1Progress));
-
-        // If Step 2 is unlocked, Step 1 fades out starting from phase1Scroll.
-        let step1FadeOutProgress = 0;
-        if (step2Unlocked) {
-            step1FadeOutProgress = (s - phase1Scroll) / fadeDistance;
-            step1FadeOutProgress = Math.max(0, Math.min(1, step1FadeOutProgress));
-        }
-
-        // Combine inner and outer fading
-        let finalStep1Opacity = step1Progress - step1FadeOutProgress;
-        finalStep1Opacity = Math.max(0, Math.min(1, finalStep1Opacity));
-
-        step1Card.style.opacity = finalStep1Opacity;
-
-        // Slide animation using our calculated moveDistance
-        let step1Y = (1 - step1Progress) * moveDistance + (step1FadeOutProgress * -moveDistance);
-        step1Card.style.transform = `translateY(${step1Y}px)`;
-
-        step1Section.style.pointerEvents = finalStep1Opacity > 0.5 ? 'auto' : 'none';
-
-        // Unlock indicator logic for Step 1
-        if (unlockStep2Indicator) {
-            if (step2Unlocked) {
-                let step2StartAppear = phase1Scroll * 2 - fadeDistance;
-
-                // フェードアウトの開始地点を少し早める (Step2が出現し始める300px手前から消え始める)
-                let arrowFadeStart = step2StartAppear - 300;
-                let indicatorOpacity = 1 - ((s - arrowFadeStart) / 300);
-
-                // Time-based smooth fade-in (takes 500ms from the moment it unlocks)
-                let timeSinceUnlock = Date.now() - step2UnlockedTime;
-                let timeFadeProgress = Math.min(1, timeSinceUnlock / 500);
-
-                let finalOpacity = Math.max(0, Math.min(1, indicatorOpacity)) * timeFadeProgress * step1Progress;
-
-                unlockStep2Indicator.style.opacity = finalOpacity;
-                unlockStep2Indicator.style.pointerEvents = finalOpacity > 0 ? 'auto' : 'none';
-            } else {
-                unlockStep2Indicator.style.opacity = 0;
-                unlockStep2Indicator.style.pointerEvents = 'none';
-            }
-        }
-
-        // --- 3. Step 2 Section ---
-        if (step2Unlocked) {
-            // Fades in just before phase 2 completes
-            let step2Progress = (s - (phase1Scroll * 2 - fadeDistance)) / fadeDistance;
-            step2Progress = Math.max(0, Math.min(1, step2Progress));
-
-            let step2FadeOutProgress = 0;
-            if (step3Unlocked) {
-                step2FadeOutProgress = (s - phase1Scroll * 2) / fadeDistance;
-                step2FadeOutProgress = Math.max(0, Math.min(1, step2FadeOutProgress));
-            }
-
-            let finalStep2Opacity = step2Progress - step2FadeOutProgress;
-            finalStep2Opacity = Math.max(0, Math.min(1, finalStep2Opacity));
-
-            step2Card.style.opacity = finalStep2Opacity;
-
-            let step2Y = (1 - step2Progress) * moveDistance + (step2FadeOutProgress * -moveDistance);
-            step2Card.style.transform = `translateY(${step2Y}px)`;
-
-            step2Section.style.pointerEvents = finalStep2Opacity > 0.5 ? 'auto' : 'none';
-
-            // Unlock indicator logic for Step 2
-            if (unlockStep3Indicator) {
-                if (step3Unlocked) {
-                    let step3StartAppear = phase1Scroll * 3 - fadeDistance;
-                    let arrowFadeStart = step3StartAppear - 300;
-                    let indicatorOpacity = 1 - ((s - arrowFadeStart) / 300);
-
-                    let timeSinceUnlock = Date.now() - step3UnlockedTime;
-                    let timeFadeProgress = Math.min(1, timeSinceUnlock / 500);
-
-                    let finalOpacity = Math.max(0, Math.min(1, indicatorOpacity)) * timeFadeProgress * step2Progress;
-
-                    unlockStep3Indicator.style.opacity = finalOpacity;
-                    unlockStep3Indicator.style.pointerEvents = finalOpacity > 0 ? 'auto' : 'none';
-                } else {
-                    unlockStep3Indicator.style.opacity = 0;
-                    unlockStep3Indicator.style.pointerEvents = 'none';
-                }
-            }
-        } else {
-            step2Card.style.opacity = 0;
-            step2Section.style.pointerEvents = 'none';
-            if (unlockStep3Indicator) {
-                unlockStep3Indicator.style.opacity = 0;
-                unlockStep3Indicator.style.pointerEvents = 'none';
-            }
-        }
-
-        // --- 4. Step 3 Section ---
-        if (step3Unlocked) {
-            let step3Progress = (s - (phase1Scroll * 3 - fadeDistance)) / fadeDistance;
-            step3Progress = Math.max(0, Math.min(1, step3Progress));
-            
-            let step3FadeOutProgress = 0;
-            if (step4Unlocked) {
-                step3FadeOutProgress = (s - phase1Scroll * 3) / fadeDistance;
-                step3FadeOutProgress = Math.max(0, Math.min(1, step3FadeOutProgress));
-            }
-
-            let finalStep3Opacity = step3Progress - step3FadeOutProgress;
-            finalStep3Opacity = Math.max(0, Math.min(1, finalStep3Opacity));
-
-            step3Card.style.opacity = finalStep3Opacity;
-
-            let step3Y = (1 - step3Progress) * moveDistance + (step3FadeOutProgress * -moveDistance);
-            step3Card.style.transform = `translateY(${step3Y}px)`;
-
-            step3Section.style.pointerEvents = finalStep3Opacity > 0.5 ? 'auto' : 'none';
-            
-            // Unlock indicator logic for Step 3
-            if (unlockStep4Indicator) {
-                if (step4Unlocked) {
-                    let step4StartAppear = phase1Scroll * 4 - fadeDistance;
-                    let arrowFadeStart = step4StartAppear - 300;
-                    let indicatorOpacity = 1 - ((s - arrowFadeStart) / 300);
-                    
-                    let timeSinceUnlock = Date.now() - step4UnlockedTime;
-                    let timeFadeProgress = Math.min(1, timeSinceUnlock / 500);
-                    
-                    let finalOpacity = Math.max(0, Math.min(1, indicatorOpacity)) * timeFadeProgress * step3Progress;
-                    
-                    unlockStep4Indicator.style.opacity = finalOpacity;
-                    unlockStep4Indicator.style.pointerEvents = finalOpacity > 0 ? 'auto' : 'none';
-                } else {
-                    unlockStep4Indicator.style.opacity = 0;
-                    unlockStep4Indicator.style.pointerEvents = 'none';
-                }
-            }
-        } else {
-            step3Card.style.opacity = 0;
-            step3Section.style.pointerEvents = 'none';
-            if (unlockStep4Indicator) {
-                unlockStep4Indicator.style.opacity = 0;
-                unlockStep4Indicator.style.pointerEvents = 'none';
-            }
+    // Title / Index page
+    const startBtn = document.getElementById('start-btn');
+    if (startBtn) {
+        const currentProgress = getProgress();
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (currentProgress && currentProgress !== 'index' && !urlParams.has('return')) {
+            // 自動的に前回の続きのページへリダイレクト
+            window.location.replace(currentProgress + '.html');
         }
         
-        // --- 5. Step 4 (Final) Section ---
-        if (step4Unlocked) {
-            let step4Progress = (s - (phase1Scroll * 4 - fadeDistance)) / fadeDistance;
-            step4Progress = Math.max(0, Math.min(1, step4Progress));
-            
-            let step4FadeOutProgress = 0;
-            if (lastStepUnlocked) {
-                step4FadeOutProgress = (s - phase1Scroll * 4) / fadeDistance;
-                step4FadeOutProgress = Math.max(0, Math.min(1, step4FadeOutProgress));
-            }
-
-            let finalStep4Opacity = step4Progress - step4FadeOutProgress;
-            finalStep4Opacity = Math.max(0, Math.min(1, finalStep4Opacity));
-
-            step4Card.style.opacity = finalStep4Opacity;
-            
-            let step4Y = (1 - step4Progress) * moveDistance + (step4FadeOutProgress * -moveDistance);
-            step4Card.style.transform = `translateY(${step4Y}px)`;
-            
-            step4Section.style.pointerEvents = finalStep4Opacity > 0.5 ? 'auto' : 'none';
-
-            // Unlock indicator logic for Step 4
-            if (unlockStep5Indicator) {
-                if (lastStepUnlocked) {
-                    let lastStepStartAppear = phase1Scroll * 5 - fadeDistance;
-                    let arrowFadeStart = lastStepStartAppear - 300;
-                    let indicatorOpacity = 1 - ((s - arrowFadeStart) / 300);
-                    
-                    let timeSinceUnlock = Date.now() - lastStepUnlockedTime;
-                    let timeFadeProgress = Math.min(1, timeSinceUnlock / 500);
-                    
-                    let finalOpacity = Math.max(0, Math.min(1, indicatorOpacity)) * timeFadeProgress * step4Progress;
-                    
-                    unlockStep5Indicator.style.opacity = finalOpacity;
-                    unlockStep5Indicator.style.pointerEvents = finalOpacity > 0 ? 'auto' : 'none';
-                } else {
-                    unlockStep5Indicator.style.opacity = 0;
-                    unlockStep5Indicator.style.pointerEvents = 'none';
-                }
-            }
-        } else {
-            step4Card.style.opacity = 0;
-            step4Section.style.pointerEvents = 'none';
-            if (unlockStep5Indicator) {
-                unlockStep5Indicator.style.opacity = 0;
-                unlockStep5Indicator.style.pointerEvents = 'none';
-            }
-        }
-
-        // --- 6. LAST STEP Section ---
-        if (lastStepUnlocked) {
-            let lastStepProgress = (s - (phase1Scroll * 5 - fadeDistance)) / fadeDistance;
-            lastStepProgress = Math.max(0, Math.min(1, lastStepProgress));
-
-            let lastStepFadeOutProgress = 0;
-            if (clearUnlocked) {
-                lastStepFadeOutProgress = (s - phase1Scroll * 5) / fadeDistance;
-                lastStepFadeOutProgress = Math.max(0, Math.min(1, lastStepFadeOutProgress));
-            }
-
-            let finalLastStepOpacity = lastStepProgress - lastStepFadeOutProgress;
-            finalLastStepOpacity = Math.max(0, Math.min(1, finalLastStepOpacity));
-
-            lastStepCard.style.opacity = finalLastStepOpacity;
-
-            let lastStepY = (1 - lastStepProgress) * moveDistance + (lastStepFadeOutProgress * -moveDistance);
-            lastStepCard.style.transform = `translateY(${lastStepY}px)`;
-
-            lastStepSection.style.pointerEvents = finalLastStepOpacity > 0.5 ? 'auto' : 'none';
-
-            // Unlock indicator logic for LAST STEP
-            if (unlockClearIndicator) {
-                if (clearUnlocked) {
-                    let clearStartAppear = phase1Scroll * 6 - fadeDistance;
-                    let arrowFadeStart = clearStartAppear - 300;
-                    let indicatorOpacity = 1 - ((s - arrowFadeStart) / 300);
-                    
-                    let timeSinceUnlock = Date.now() - clearUnlockedTime;
-                    let timeFadeProgress = Math.min(1, timeSinceUnlock / 500);
-                    
-                    let finalOpacity = Math.max(0, Math.min(1, indicatorOpacity)) * timeFadeProgress * lastStepProgress;
-                    
-                    unlockClearIndicator.style.opacity = finalOpacity;
-                    unlockClearIndicator.style.pointerEvents = finalOpacity > 0 ? 'auto' : 'none';
-                } else {
-                    unlockClearIndicator.style.opacity = 0;
-                    unlockClearIndicator.style.pointerEvents = 'none';
-                }
-            }
-        } else {
-            lastStepCard.style.opacity = 0;
-            lastStepSection.style.pointerEvents = 'none';
-            if (unlockClearIndicator) {
-                unlockClearIndicator.style.opacity = 0;
-                unlockClearIndicator.style.pointerEvents = 'none';
-            }
-        }
-
-        // --- 7. Clear Section ---
-        if (clearUnlocked) {
-            let clearProgress = (s - (phase1Scroll * 6 - fadeDistance)) / fadeDistance;
-            clearProgress = Math.max(0, Math.min(1, clearProgress));
-
-            if (clearCard) {
-                clearCard.style.opacity = clearProgress;
-                let clearY = (1 - clearProgress) * moveDistance;
-                clearCard.style.transform = `translateY(${clearY}px)`;
-            }
-
-            if (clearSection) {
-                clearSection.style.pointerEvents = clearProgress > 0.5 ? 'auto' : 'none';
-            }
-        } else {
-            if (clearCard) clearCard.style.opacity = 0;
-            if (clearSection) clearSection.style.pointerEvents = 'none';
-        }
-
-        requestAnimationFrame(render);
-    }
-
-    // Version Trigger (Tap 'M' 5 times)
-    const versionTrigger = document.getElementById('version-trigger');
-    let tapCount = 0;
-    let tapTimeout;
-    if (versionTrigger) {
-        // Prevent double-tap zoom on mobile to allow fast tapping
-        versionTrigger.style.touchAction = 'manipulation';
-        versionTrigger.addEventListener('click', () => {
-            tapCount++;
-            clearTimeout(tapTimeout);
-            if (tapCount >= 5) {
-                alert('Version: 1.0.11 (Deep Research Architecture)');
-                tapCount = 0;
-            } else {
-                tapTimeout = setTimeout(() => {
-                    tapCount = 0;
-                }, 1000); // Reset count if more than 1s passes between taps
-            }
+        startBtn.addEventListener('click', () => {
+            window.location.href = 'rules.html';
         });
     }
 
-    // Start loop
-    render();
+    // Rules page
+    const rulesBtn = document.getElementById('rules-next-btn');
+    if (rulesBtn) {
+        saveProgress('rules');
+        rulesBtn.addEventListener('click', () => {
+            window.location.href = 'step1.html';
+        });
+    }
+
+    // Step 1
+    const answer1Input = document.getElementById('answer1');
+    const submit1Btn = document.getElementById('submit1');
+    const feedback1Container = document.getElementById('feedback1');
+    const nextBtn1 = document.getElementById('next-btn1');
+    
+    if (answer1Input && submit1Btn) {
+        saveProgress('step1');
+        
+        const restoreStep1 = (ans) => {
+            answer1Input.value = ans;
+            inputSuccessStyle(answer1Input);
+            answer1Input.disabled = true;
+            submit1Btn.disabled = true;
+            feedback1Container.innerHTML = `
+                <div class="success-message">
+                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0;">正解！</p>
+                </div>
+            `;
+            nextBtn1.classList.remove('hidden');
+        };
+
+        const savedAns1 = localStorage.getItem('riddleroom_step1_cleared');
+        if (savedAns1) restoreStep1(savedAns1);
+
+        const checkAnswer1 = () => {
+            if (nextBtn1 && !nextBtn1.classList.contains('hidden')) return;
+            const answer = answer1Input.value.trim();
+            if (answer === 'イラスト' || answer === 'いらすと') {
+                localStorage.setItem('riddleroom_step1_cleared', answer);
+                restoreStep1(answer);
+            } else if (answer !== '') {
+                shakeInput(answer1Input);
+            }
+        };
+        submit1Btn.addEventListener('click', checkAnswer1);
+        answer1Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer1(); });
+    }
+
+    // Step 2
+    const answer2Input = document.getElementById('answer2');
+    const submit2Btn = document.getElementById('submit2');
+    const feedback2Container = document.getElementById('feedback2');
+    const nextBtn2 = document.getElementById('next-btn2');
+
+    if (answer2Input && submit2Btn) {
+        saveProgress('step2');
+        
+        const restoreStep2 = (ans) => {
+            answer2Input.value = ans;
+            inputSuccessStyle(answer2Input);
+            answer2Input.disabled = true;
+            submit2Btn.disabled = true;
+            feedback2Container.innerHTML = `
+                <div class="success-message">
+                    <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0;">正解！</p>
+                </div>
+            `;
+            nextBtn2.classList.remove('hidden');
+        };
+
+        const savedAns2 = localStorage.getItem('riddleroom_step2_cleared');
+        if (savedAns2) restoreStep2(savedAns2);
+
+        const checkAnswer2 = () => {
+            if (nextBtn2 && !nextBtn2.classList.contains('hidden')) return;
+            const answer = answer2Input.value.trim();
+            if (answer === 'クエスト' || answer === 'くえすと') {
+                localStorage.setItem('riddleroom_step2_cleared', answer);
+                restoreStep2(answer);
+            } else if (answer !== '') {
+                shakeInput(answer2Input);
+            }
+        };
+        submit2Btn.addEventListener('click', checkAnswer2);
+        answer2Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer2(); });
+    }
+
+    // Step 3 (Merged with Step 4)
+    const answer3_1Input = document.getElementById('answer3_1');
+    const answer3_2Input = document.getElementById('answer3_2');
+    const submit3Btn = document.getElementById('submit3');
+    const feedback3Container = document.getElementById('feedback3');
+
+    const answer4Input = document.getElementById('answer4');
+    const submit4Btn = document.getElementById('submit4');
+    const feedback4Container = document.getElementById('feedback4');
+    const nextBtn4 = document.getElementById('next-btn4');
+    
+    const phase1Div = document.getElementById('step3-phase1');
+    const phase2Div = document.getElementById('step3-phase2');
+
+    if (answer3_1Input && answer3_2Input && submit3Btn) {
+        saveProgress('step3');
+
+        const transitionToPhase2 = () => {
+            if (phase1Div && phase2Div) {
+                feedback3Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0;">正解！</p>
+                    </div>
+                `;
+                phase2Div.style.display = 'block';
+                void phase2Div.offsetWidth;
+                phase2Div.style.opacity = '1';
+            }
+        };
+
+        const restoreStep3Phase1 = (ans1, ans2, skipAnimation) => {
+            answer3_1Input.value = ans1;
+            answer3_2Input.value = ans2;
+            inputSuccessStyle(answer3_1Input);
+            inputSuccessStyle(answer3_2Input);
+            answer3_1Input.disabled = true;
+            answer3_2Input.disabled = true;
+            submit3Btn.disabled = true;
+            
+            if (skipAnimation && phase1Div && phase2Div) {
+                feedback3Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0;">正解！</p>
+                    </div>
+                `;
+                phase2Div.style.display = 'block';
+                phase2Div.style.opacity = '1';
+            }
+        };
+
+        const restoreStep3Phase2 = (ans) => {
+            if (answer4Input && submit4Btn && feedback4Container && nextBtn4) {
+                answer4Input.value = ans;
+                inputSuccessStyle(answer4Input);
+                answer4Input.disabled = true;
+                submit4Btn.disabled = true;
+                feedback4Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0;">正解！</p>
+                    </div>
+                `;
+                nextBtn4.classList.remove('hidden');
+            }
+        };
+
+        const savedAns3Phase1 = localStorage.getItem('riddleroom_step3_cleared');
+        const savedAns3Phase2 = localStorage.getItem('riddleroom_step4_cleared'); // keep using step4 key for backward compatibility
+
+        if (savedAns3Phase1) {
+            const parts = savedAns3Phase1.split(',');
+            // If already cleared, we show phase 1 correct state and display phase 2 below it
+            restoreStep3Phase1(parts[0], parts[1], true);
+        }
+        if (savedAns3Phase2) {
+            restoreStep3Phase2(savedAns3Phase2);
+        }
+
+        const checkAnswer3Phase1 = () => {
+            if (answer3_1Input.disabled) return;
+            const ans1 = answer3_1Input.value.trim();
+            const ans2 = answer3_2Input.value.trim();
+            const isOndoku = (val) => ['おんどく', 'オンドク', '音読'].includes(val);
+            const isChiritori = (val) => ['ちりとり', 'チリトリ'].includes(val);
+            const correct = (isOndoku(ans1) && isChiritori(ans2)) || (isChiritori(ans1) && isOndoku(ans2));
+
+            if (correct) {
+                localStorage.setItem('riddleroom_step3_cleared', ans1 + ',' + ans2);
+                restoreStep3Phase1(ans1, ans2, false);
+                transitionToPhase2();
+            } else {
+                if (ans1 !== '' && !(isOndoku(ans1) || isChiritori(ans1))) shakeInput(answer3_1Input);
+                if (ans2 !== '' && !(isOndoku(ans2) || isChiritori(ans2))) shakeInput(answer3_2Input);
+                if (ans1 === '' && ans2 === '') { shakeInput(answer3_1Input); shakeInput(answer3_2Input); }
+            }
+        };
+
+        submit3Btn.addEventListener('click', checkAnswer3Phase1);
+        answer3_1Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer3Phase1(); });
+        answer3_2Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer3Phase1(); });
+
+        // Phase 2 logic (former Step 4)
+        if (answer4Input && submit4Btn && feedback4Container && nextBtn4) {
+            const checkAnswer4 = () => {
+                if (nextBtn4 && !nextBtn4.classList.contains('hidden')) return;
+                const answer = answer4Input.value.trim();
+                if (answer === 'さいご' || answer === '最後' || answer === 'サイゴ') {
+                    localStorage.setItem('riddleroom_step4_cleared', answer);
+                    restoreStep3Phase2(answer);
+                } else if (answer !== '') {
+                    shakeInput(answer4Input);
+                }
+            };
+            submit4Btn.addEventListener('click', checkAnswer4);
+            answer4Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer4(); });
+        }
+    }
+
+    // Last Step
+    const answer5_1Input = document.getElementById('answer5_1');
+    const submit5_1Btn = document.getElementById('submit5_1');
+    const feedback5_1Container = document.getElementById('feedback5_1');
+    
+    const answer5_2Input = document.getElementById('answer5_2');
+    const submit5_2Btn = document.getElementById('submit5_2');
+    const feedback5_2Container = document.getElementById('feedback5_2');
+    const nextBtn5 = document.getElementById('next-btn5');
+    
+    const lastStepPhase1Div = document.getElementById('last-step-phase1');
+    const lastStepPhase2Div = document.getElementById('last-step-phase2');
+
+    if (answer5_1Input && answer5_2Input && submit5_1Btn) {
+        saveProgress('last_step');
+
+        const transitionToLastStepPhase2 = (displayWord) => {
+            if (lastStepPhase1Div && lastStepPhase2Div) {
+                feedback5_1Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
+                        <p class="success-text" style="line-height: 1.6; color: var(--text-main);">
+                            どうやら天井の${displayWord}は取り外せるようだ。
+                        </p>
+                    </div>
+                `;
+                lastStepPhase2Div.style.display = 'block';
+                void lastStepPhase2Div.offsetWidth;
+                lastStepPhase2Div.style.opacity = '1';
+            }
+        };
+
+        const restoreLastStepPhase1 = (ans, displayWord, skipAnimation) => {
+            answer5_1Input.value = ans;
+            inputSuccessStyle(answer5_1Input);
+            answer5_1Input.disabled = true;
+            submit5_1Btn.disabled = true;
+            
+            if (displayWord === 'CAMERA_SKIP') {
+                feedback5_1Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
+                        <p class="success-text" style="line-height: 1.6;">
+                            リドルルームの全ての謎を解いた！
+                        </p>
+                    </div>
+                `;
+                if (nextBtn5) nextBtn5.classList.remove('hidden');
+            } else if (skipAnimation && lastStepPhase1Div && lastStepPhase2Div) {
+                feedback5_1Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
+                        <p class="success-text" style="line-height: 1.6; color: var(--text-main);">
+                            どうやら天井の${displayWord}は取り外せるようだ。
+                        </p>
+                    </div>
+                `;
+                lastStepPhase2Div.style.display = 'block';
+                lastStepPhase2Div.style.opacity = '1';
+            }
+        };
+
+        const restoreLastStepPhase2 = (ans) => {
+            if (answer5_2Input && submit5_2Btn && feedback5_2Container && nextBtn5) {
+                answer5_2Input.value = ans;
+                inputSuccessStyle(answer5_2Input);
+                answer5_2Input.disabled = true;
+                submit5_2Btn.disabled = true;
+                feedback5_2Container.innerHTML = `
+                    <div class="success-message">
+                        <p class="success-text" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;">正解！</p>
+                        <p class="success-text" style="line-height: 1.6;">
+                            リドルルームの全ての謎を解いた！
+                        </p>
+                    </div>
+                `;
+                nextBtn5.classList.remove('hidden');
+            }
+        };
+
+        const savedAns5Phase1 = localStorage.getItem('riddleroom_last_step_phase1_cleared');
+        const savedAns5Phase2 = localStorage.getItem('riddleroom_last_step_cleared');
+
+        let skippedPhase2 = false;
+        if (savedAns5Phase1) {
+            const parts = savedAns5Phase1.split(',');
+            if (parts[1] === 'CAMERA_SKIP') {
+                skippedPhase2 = true;
+                restoreLastStepPhase1(parts[0], 'CAMERA_SKIP', true);
+            } else {
+                restoreLastStepPhase1(parts[0], parts[1] || '明かり', true);
+            }
+        }
+        if (savedAns5Phase2 && !skippedPhase2) {
+            // For backward compatibility
+            if (!savedAns5Phase1) restoreLastStepPhase1('ライト', 'ライト', true);
+            restoreLastStepPhase2(savedAns5Phase2);
+        }
+
+        const checkAnswer5Phase1 = () => {
+            if (answer5_1Input.disabled) return;
+            const answer = answer5_1Input.value.trim();
+            
+            const isCamera = ['カメラ', 'かめら'].includes(answer);
+            if (isCamera) {
+                localStorage.setItem('riddleroom_last_step_cleared', answer);
+                localStorage.setItem('riddleroom_last_step_phase1_cleared', answer + ',CAMERA_SKIP');
+                restoreLastStepPhase1(answer, 'CAMERA_SKIP', false);
+                return;
+            }
+
+            let displayWord = "";
+            if (['ライト', 'らいと'].includes(answer)) displayWord = 'ライト';
+            else if (['あかり', 'アカリ', '明かり'].includes(answer)) displayWord = '明かり';
+
+            if (displayWord !== "") {
+                localStorage.setItem('riddleroom_last_step_phase1_cleared', answer + ',' + displayWord);
+                restoreLastStepPhase1(answer, displayWord, false);
+                transitionToLastStepPhase2(displayWord);
+            } else if (answer !== '') {
+                shakeInput(answer5_1Input);
+            }
+        };
+        submit5_1Btn.addEventListener('click', checkAnswer5Phase1);
+        answer5_1Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer5Phase1(); });
+
+        if (answer5_2Input && submit5_2Btn && feedback5_2Container && nextBtn5) {
+            const checkAnswer5Phase2 = () => {
+                if (nextBtn5 && !nextBtn5.classList.contains('hidden') && !skippedPhase2) return;
+                const answer = answer5_2Input.value.trim();
+                const isCamera = ['カメラ', 'かめら'].includes(answer);
+                if (isCamera) {
+                    localStorage.setItem('riddleroom_last_step_cleared', answer);
+                    restoreLastStepPhase2(answer);
+                } else if (answer !== '') {
+                    shakeInput(answer5_2Input);
+                }
+            };
+            submit5_2Btn.addEventListener('click', checkAnswer5Phase2);
+            answer5_2Input.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer5Phase2(); });
+        }
+    }
+
+    if (document.querySelector('img[src="clear.png"]')) {
+        saveProgress('clear');
+    }
+
+    // Add CSS for shake animation dynamically
+    if (!document.getElementById('shake-style')) {
+        const style = document.createElement('style');
+        style.id = 'shake-style';
+        style.textContent = `
+            @keyframes shake {
+                0% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                50% { transform: translateX(5px); }
+                75% { transform: translateX(-5px); }
+                100% { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 });

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+    <title>3rd STEP - RIDDLE ROOM</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <a href="hint.html" class="hint-link">ヒント</a>
+    <a href="https://x.com/monushi_nazo" target="_blank" rel="noopener noreferrer" class="report-link">問題を報告する</a>
+    
+    <div class="scroll-container">
+        <section class="section">
+            <div class="step-card">
+                <h2 class="step-title">3rd STEP</h2>
+                
+                <div id="step3-phase1" class="phase-container">
+                    <p class="instruction">
+                        <span style="text-decoration: underline; text-decoration-color: var(--red-circle); text-decoration-thickness: 2px; text-underline-offset: 4px;">最初</span>を<span style="text-decoration: underline; text-decoration-color: var(--red-circle); text-decoration-thickness: 2px; text-underline-offset: 4px;">最後</span>にしよう。<br class="sp-br">出てきた2つの答えを下の欄に入力しよう。
+                    </p>
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <input type="text" id="answer3_1" placeholder="答えを入力" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="answer3_2" placeholder="答えを入力" autocomplete="off">
+                        <button id="submit3" class="submit-btn" aria-label="Submit answer">→</button>
+                    </div>
+                    <div id="feedback3" class="feedback-container"></div>
+                </div>
+
+                <div id="step3-phase2" class="phase-container" style="display: none; opacity: 0; transition: opacity 0.8s ease; margin-top: 2rem; padding-top: 2rem; border-top: 1px dashed #ccc;">
+                    <p class="instruction" style="color: #000;">
+                        部屋の中の目が届かないところを見よう
+                    </p>
+                    <div class="input-group">
+                        <input type="text" id="answer4" placeholder="答えを入力" autocomplete="off">
+                        <button id="submit4" class="submit-btn" aria-label="Submit answer">→</button>
+                    </div>
+                    <div id="feedback4" class="feedback-container"></div>
+                    <a href="last_step.html" id="next-btn4" class="next-button hidden">NEXT STEP</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <a href="step2.html" class="prev-button">◀ 前のページ</a>
+    <script src="script.js"></script>
+</body>
+
+</html>

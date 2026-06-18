@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+    <title>LAST STEP - RIDDLE ROOM</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <a href="hint.html" class="hint-link">ヒント</a>
+    <a href="https://x.com/monushi_nazo" target="_blank" rel="noopener noreferrer" class="report-link">問題を報告する</a>
+    
+    <div class="scroll-container">
+        <section class="section">
+            <div class="step-card">
+                <h2 class="step-title">LAST STEP</h2>
+                <div id="last-step-phase1" class="phase-container">
+                    <p class="instruction">
+                        封筒2の中の謎を解こう
+                    </p>
+                    <div class="input-group">
+                        <input type="text" id="answer5_1" placeholder="答えを入力" autocomplete="off">
+                        <button id="submit5_1" class="submit-btn" aria-label="Submit answer">→</button>
+                    </div>
+                    <div id="feedback5_1" class="feedback-container"></div>
+                </div>
+
+                <div id="last-step-phase2" class="phase-container" style="display: none; opacity: 0; transition: opacity 0.8s ease; margin-top: 2rem; padding-top: 2rem; border-top: 1px dashed #ccc;">
+                    <div class="input-group">
+                        <input type="text" id="answer5_2" placeholder="答えを入力" autocomplete="off">
+                        <button id="submit5_2" class="submit-btn" aria-label="Submit answer">→</button>
+                    </div>
+                    <div id="feedback5_2" class="feedback-container"></div>
+                </div>
+                <a href="clear.html" id="next-btn5" class="next-button hidden" style="margin-top: 2rem;">クリアページへ</a>
+            </div>
+        </section>
+    </div>
+
+    <a href="index.html?return=1" class="title-button">▲ タイトルへ戻る</a>
+    <a href="step3.html" class="prev-button">◀ 前のページ</a>
+    <script src="script.js"></script>
+</body>
+
+</html>

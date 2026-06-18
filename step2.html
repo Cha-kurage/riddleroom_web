@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+    <title>2nd STEP - RIDDLE ROOM</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <a href="hint.html" class="hint-link">ヒント</a>
+    <a href="https://x.com/monushi_nazo" target="_blank" rel="noopener noreferrer" class="report-link">問題を報告する</a>
+
+    <div class="scroll-container">
+        <section class="section">
+            <div class="step-card">
+                <h2 class="step-title">2nd STEP</h2>
+                <p class="instruction">
+                    ダイヤル錠の番号を123に合わせて天井を開けよう。<br>
+                    そして、封筒1を開けて中の謎を解こう。<br>
+                    その際、4つのアイテムを取り出して謎を成立させてから解こう。<br class="sp-br">
+                    解けたら答えの<span
+                        style="text-decoration: underline; text-decoration-color: var(--red-circle); text-decoration-thickness: 2px; text-underline-offset: 4px;">最初</span>の文字を並び替えて<br
+                        class="pc-br">
+                    一般的な単語にし、下の欄に入力しよう。
+                </p>
+                <div class="item-container">
+                    <p class="item-note">※アイテムにはこのマークがついている</p>
+                    <img src="item.png" alt="アイテムマーク" class="item-image">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="answer2" placeholder="答えを入力" autocomplete="off">
+                    <button id="submit2" class="submit-btn" aria-label="Submit answer">→</button>
+                </div>
+                <div id="feedback2" class="feedback-container"></div>
+                <a href="step3.html" id="next-btn2" class="next-button hidden">NEXT STEP</a>
+            </div>
+        </section>
+    </div>
+
+    <a href="step1.html" class="prev-button">◀ 前のページ</a>
+    <script src="script.js"></script>
+</body>
+
+</html>
