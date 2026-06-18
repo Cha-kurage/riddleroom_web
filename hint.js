@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 {
                     "title": "亀がいる壁",
                     "hints": [
-                        "左側には漢字と「鏡」、矢印の先には「亀」と「手紙」が置いてあります。",
-                        "「かがみ」を上から文字として置いて漢字の読みと併せた時に「かめ」と「てがみ」になります。下の漢字は印を半分に割っていそうです。",
+                        "左側にはいくつかのひらがなと「鏡」、矢印の先には「亀」と「手紙」が置いてあります。",
+                        "「かがみ」を上から文字として置くと、「かめ」と「てがみ」になります。",
                         "答えは「いみん」です。"
                     ]
                 },
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     "title": "目の謎",
                     "hints": [
                         "「め」になりそうなアイテムを探しましょう。",
-                        "緑の折り紙の折れ目と周りを線とすると漢字の「目」と読むことが出来そうです。",
+                        "緑の折り紙の裏側の線を問題の枠に載せると漢字の「目」と読むことが出来そうです。",
                         "答えは「くち」です。"
                     ]
                 },
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         "「最初」という文字は指示文の「答えの最初の文字を並び替えて単語にしろ」という指示文の中にありました。",
                         "では、この指示文の「最初」を「最後」に変える、つまり答えの最後の文字を並び替えてそれぞれ単語にしましょう。",
                         "それぞれの答えは「おんどく」「ちりとり」になります。",
-                        "これらをそれぞれ送信すると「見えない所を見ろ」という指示が渡されます。今この部屋で見えてない所を探してみましょう。貴方達は1度見えない所を何かを使って見た経験があるはずです。",
+                        "これらをそれぞれ送信すると「」という指示が渡されます。今この部屋で見えてない所を探してみましょう。貴方達は1度見えない所を何かを使って見た経験があるはずです。",
                         "1stで壁の見えない謎を鏡に反射させて見たように、まだ見ていない机の裏を見ましょう。",
                         "最初と送ろうという指示がありますが、最初は最後にするので「最後」と送信しましょう。"
                     ]
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.className = 'hint-item';
                 // Initially hide ALL hints
                 item.classList.add('hidden');
-                
+
                 const text = document.createElement('p');
                 text.className = 'hint-text';
                 text.innerHTML = '<strong>ヒント' + (hintIndex + 1) + '：</strong><br>' + hintText.replace(/\n/g, '<br>');
@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const btn = document.createElement('button');
             btn.className = 'next-hint-btn';
-            
+
             let currentHintIndex = -1; // -1 means no hints are shown yet
-            
+
             const updateButtonText = () => {
                 if (currentHintIndex === -1) {
                     btn.textContent = 'ヒントを見る';
